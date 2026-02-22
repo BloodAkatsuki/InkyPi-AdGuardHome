@@ -1,6 +1,12 @@
 {% extends "plugin.html" %}
 
 {% block content %}
+<style>
+:root {
+    --color-blocked: {{ color_blocked }};
+    --color-total: {{ color_total }};
+}
+</style>
 <div class="agh-dashboard">
 
     <!-- Header: title + status badge -->

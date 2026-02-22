@@ -14,6 +14,7 @@ An [InkyPi](https://github.com/fatihak/InkyPi) plugin that displays live statist
 - Blocklist rule count
 - Top 5 clients by query volume
 - 24-hour query history chart (allowed vs. blocked)
+- Customizable bar colors (blocked queries color, total queries bar background)
 - Each section can be toggled on or off individually
 
 ## APIs Used
@@ -23,7 +24,7 @@ An [InkyPi](https://github.com/fatihak/InkyPi) plugin that displays live statist
   - `GET /control/stats` — query statistics, top clients, 24h history
   - `GET /control/filtering/status` — blocklist rule count
 - Authentication via HTTP Basic Auth (username + password configured in settings).
-- Supports self-signed HTTPS certificates (optional toggle).
+- Works with both IP addresses and domain names (including HTTPS with self-signed certificates, e.g. via Nginx Proxy Manager).
 
 ## Requirements
 
@@ -41,10 +42,11 @@ inkypi plugin install adguard_home https://github.com/BloodAkatsuki/InkyPi-AdGua
 
 | Setting | Description |
 |---|---|
-| **URL** | AdGuard Home address, e.g. `http://192.168.1.1` or `http://192.168.1.1:3000` |
+| **URL** | AdGuard Home address, e.g. `http://192.168.1.1`, `http://192.168.1.1:3000` or `https://adguard.example.com` |
 | **Username** | AdGuard Home login username |
 | **Password** | AdGuard Home login password |
-| **Allow self-signed certificate** | Enable if using HTTPS with a self-signed cert |
+| **Blocked queries color** | Color for blocked bars, text and progress fill (default: red `#c62828`) |
+| **Total queries bar color** | Background color of total query bars in the chart (default: gray `#cccccc`) |
 | **Display options** | Toggle each dashboard section individually |
 
 ## Status

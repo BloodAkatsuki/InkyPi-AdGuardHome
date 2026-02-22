@@ -13,14 +13,6 @@
     <input type="password" id="password" name="password" class="form-input" autocomplete="off">
 </div>
 
-<div class="form-group">
-    <label class="form-label">Allow Self-Signed Certificate (HTTPS)</label>
-    <div class="radio-group">
-        <label><input type="radio" name="allow_insecure" value="false"> No</label>
-        <label><input type="radio" name="allow_insecure" value="true"> Yes</label>
-    </div>
-</div>
-
 <hr>
 
 <div class="form-group">
@@ -34,6 +26,22 @@
     </div>
 </div>
 
+<hr>
+
+<div class="form-group">
+    <label class="form-label">Bar Colors</label>
+    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <input type="color" id="color_blocked" name="color_blocked" value="#c62828">
+            <label for="color_blocked" style="margin: 0;">Blocked queries (bars, text, progress)</label>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <input type="color" id="color_total" name="color_total" value="#cccccc">
+            <label for="color_total" style="margin: 0;">Total queries bar background</label>
+        </div>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         if (loadPluginSettings) {
@@ -41,15 +49,14 @@
             document.getElementById('username').value = pluginSettings.username || '';
             document.getElementById('password').value = pluginSettings.password || '';
 
-            const insecure = pluginSettings.allow_insecure || 'false';
-            document.querySelector(`input[name="allow_insecure"][value="${insecure}"]`).checked = true;
+            document.getElementById('color_blocked').value = pluginSettings.color_blocked || '#c62828';
+            document.getElementById('color_total').value = pluginSettings.color_total || '#cccccc';
 
             ['show_status', 'show_queries', 'show_top_clients', 'show_chart', 'show_rules'].forEach(key => {
                 const cb = document.querySelector(`input[name="${key}"]`);
                 if (cb) cb.checked = pluginSettings[key] !== 'false';
             });
         } else {
-            document.querySelector('input[name="allow_insecure"][value="false"]').checked = true;
             document.querySelectorAll('.checkbox-group input[type="checkbox"]').forEach(cb => cb.checked = true);
         }
     });

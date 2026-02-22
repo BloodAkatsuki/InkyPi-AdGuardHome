@@ -26,7 +26,7 @@ class AdGuardHome(BasePlugin):
 
         auth = (username, password) if username else None
 
-        stats = self._fetch_stats(host, auth, settings.get("allow_insecure") == "true")
+        stats = self._fetch_stats(host, auth)
         if stats is None:
             raise RuntimeError("Could not connect to AdGuard Home. Check your URL and credentials.")
 
@@ -51,31 +51,33 @@ class AdGuardHome(BasePlugin):
             "show_top_clients": settings.get("show_top_clients", "true") == "true",
             "show_chart": settings.get("show_chart", "true") == "true",
             "show_rules": settings.get("show_rules", "true") == "true",
+            # colors
+            "color_blocked": settings.get("color_blocked", "#c62828"),
+            "color_total": settings.get("color_total", "#cccccc"),
             "plugin_settings": settings,
         }
 
         return self.render_image(dimensions, "adguard_home.html", "adguard_home.css", template_params)
 
-    def _fetch_stats(self, host, auth, allow_insecure):
+    def _fetch_stats(self, host, auth):
         session = get_http_session()
-        verify = not allow_insecure
         base = f"{host}/control"
 
         try:
             # Status: protection enabled, version
-            status_resp = session.get(f"{base}/status", auth=auth, timeout=10, verify=verify)
+            status_resp = session.get(f"{base}/status", auth=auth, timeout=10, verify=False)
             status_resp.raise_for_status()
             status = status_resp.json()
 
             # Stats: queries, blocked, top clients, history
-            stats_resp = session.get(f"{base}/stats", auth=auth, timeout=10, verify=verify)
+            stats_resp = session.get(f"{base}/stats", auth=auth, timeout=10, verify=False)
             stats_resp.raise_for_status()
             stats = stats_resp.json()
 
             # Filtering: rule count
             rules_count = 0
             try:
-                filtering_resp = session.get(f"{base}/filtering/status", auth=auth, timeout=10, verify=verify)
+                filtering_resp = session.get(f"{base}/filtering/status", auth=auth, timeout=10, verify=False)
                 filtering_resp.raise_for_status()
                 rules_count = filtering_resp.json().get("rules_count", 0)
             except Exception as e:
