@@ -62,9 +62,27 @@ class AdGuardHome(BasePlugin):
 
         return self.render_image(dimensions, "adguard_home.html", "adguard_home.css", template_params)
 
+    def _detect_base(self, session, host, auth):
+        """Try /control prefix (direct), then root (reverse proxy). Returns working base or None."""
+        for candidate in [f"{host}/control", host]:
+            try:
+                r = session.get(f"{candidate}/status", auth=auth, timeout=10, verify=False)
+                if r.status_code == 200:
+                    logger.info("AdGuard Home API found at %s", candidate)
+                    return candidate
+                if r.status_code == 401:
+                    return candidate  # right path, wrong credentials — let it fail with 401
+            except Exception:
+                pass
+        return None
+
     def _fetch_stats(self, host, auth):
         session = get_http_session()
-        base = f"{host}/control"
+
+        # Try /control prefix first (direct access), then without (reverse proxy setups)
+        base = self._detect_base(session, host, auth)
+        if base is None:
+            return None, f"API not found at {host}/control or {host} — check URL and credentials"
 
         try:
             # Status: protection enabled, version
