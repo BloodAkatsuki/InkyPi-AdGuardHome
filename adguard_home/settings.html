@@ -1,0 +1,56 @@
+<div class="form-group">
+    <label for="host" class="form-label">AdGuard Home URL</label>
+    <input type="text" id="host" name="host" placeholder="http://192.168.1.1:3000" class="form-input">
+</div>
+
+<div class="form-group">
+    <label for="username" class="form-label">Username</label>
+    <input type="text" id="username" name="username" placeholder="admin" class="form-input" autocomplete="off">
+</div>
+
+<div class="form-group">
+    <label for="password" class="form-label">Password</label>
+    <input type="password" id="password" name="password" class="form-input" autocomplete="off">
+</div>
+
+<div class="form-group">
+    <label class="form-label">Allow Self-Signed Certificate (HTTPS)</label>
+    <div class="radio-group">
+        <label><input type="radio" name="allow_insecure" value="false"> No</label>
+        <label><input type="radio" name="allow_insecure" value="true"> Yes</label>
+    </div>
+</div>
+
+<hr>
+
+<div class="form-group">
+    <label class="form-label">Display Options</label>
+    <div class="checkbox-group">
+        <label><input type="checkbox" name="show_status" value="true"> Protection Status</label>
+        <label><input type="checkbox" name="show_queries" value="true"> Query Statistics</label>
+        <label><input type="checkbox" name="show_top_clients" value="true"> Top Clients</label>
+        <label><input type="checkbox" name="show_chart" value="true"> 24h Chart</label>
+        <label><input type="checkbox" name="show_rules" value="true"> Blocklist Size</label>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (loadPluginSettings) {
+            document.getElementById('host').value = pluginSettings.host || '';
+            document.getElementById('username').value = pluginSettings.username || '';
+            document.getElementById('password').value = pluginSettings.password || '';
+
+            const insecure = pluginSettings.allow_insecure || 'false';
+            document.querySelector(`input[name="allow_insecure"][value="${insecure}"]`).checked = true;
+
+            ['show_status', 'show_queries', 'show_top_clients', 'show_chart', 'show_rules'].forEach(key => {
+                const cb = document.querySelector(`input[name="${key}"]`);
+                if (cb) cb.checked = pluginSettings[key] !== 'false';
+            });
+        } else {
+            document.querySelector('input[name="allow_insecure"][value="false"]').checked = true;
+            document.querySelectorAll('.checkbox-group input[type="checkbox"]').forEach(cb => cb.checked = true);
+        }
+    });
+</script>
