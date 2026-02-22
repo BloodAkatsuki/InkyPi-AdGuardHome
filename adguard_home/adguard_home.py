@@ -1,6 +1,9 @@
 from plugins.base_plugin.base_plugin import BasePlugin
 from utils.http_client import get_http_session
 import logging
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 logger = logging.getLogger(__name__)
 
@@ -26,9 +29,9 @@ class AdGuardHome(BasePlugin):
 
         auth = (username, password) if username else None
 
-        stats = self._fetch_stats(host, auth)
+        stats, error = self._fetch_stats(host, auth)
         if stats is None:
-            raise RuntimeError("Could not connect to AdGuard Home. Check your URL and credentials.")
+            raise RuntimeError(f"Could not connect to AdGuard Home: {error}")
 
         template_params = {
             "protection_enabled": stats["protection_enabled"],
@@ -85,7 +88,7 @@ class AdGuardHome(BasePlugin):
 
         except Exception as e:
             logger.error("AdGuard Home fetch failed: %s", e)
-            return None
+            return None, str(e)
 
         total = stats.get("num_dns_queries", 0)
         blocked = stats.get("num_blocked_filtering", 0)
@@ -140,4 +143,4 @@ class AdGuardHome(BasePlugin):
             "dns_queries_history": dns_history,
             "blocked_history": blocked_history,
             "chart_bars": chart_bars,
-        }
+        }, None
