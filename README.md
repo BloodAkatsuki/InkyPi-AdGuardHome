@@ -4,7 +4,7 @@ An [InkyPi](https://github.com/fatihak/InkyPi) plugin that displays live statist
 
 ## Screenshot
 
-<!-- Add a screenshot of the plugin running on your display here -->
+![InkyPi AdGuard Home screenshot](./assets/screenshots/screenshot.png)
 
 ## Features
 
